@@ -21,7 +21,13 @@ function Doctor() {
   return (
     <div>
       <h2>Doctors</h2>
-      <input onChange={(e) => setName(e.target.value)} />
+
+      <input
+        type="text"
+        placeholder="Enter Doctor Name"
+        onChange={(e) => setName(e.target.value)}
+      />
+
       <button onClick={addDoctor}>Add</button>
 
       <ul>
