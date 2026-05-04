@@ -2,14 +2,25 @@ const express = require('express');
 const router = express.Router();
 const Billing = require('../models/Billing');
 
-router.post('/', async (req, res) => {
-  const data = await Billing.create(req.body);
-  res.json(data);
-});
-
 router.get('/', async (req, res) => {
   const data = await Billing.find().populate('patientId');
   res.json(data);
+});
+
+router.post('/', async (req, res) => {
+  try {
+    const { patientId, amount } = req.body;
+
+    if (!patientId || !amount)
+      return res.status(400).json({ error: "All fields required" });
+
+    const newBill = new Billing({ patientId, amount });
+    await newBill.save();
+
+    res.json(newBill);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;
