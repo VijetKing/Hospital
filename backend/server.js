@@ -13,9 +13,16 @@ connectDB();
 
 // Routes
 app.use('/api/patients', require('./routes/patientRoutes'));
+
 app.use('/api/doctors', require('./routes/doctorRoutes'));
+
 app.use('/api/appointments', require('./routes/appointmentRoutes'));
+
 app.use('/api/billing', require('./routes/billingRoutes'));
+
+/* ✅ ADD THIS */
+app.use('/api/prescriptions', require('./routes/prescriptionRoutes'));
+
 
 // Test route
 app.get('/', (req, res) => {
@@ -23,4 +30,7 @@ app.get('/', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+app.listen(PORT, () =>
+  console.log(`Server running on port ${PORT}`)
+);
