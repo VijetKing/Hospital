@@ -142,6 +142,21 @@ export default function App() {
     if(!aPatient||!aDoctor||!aDate) return toast('Fill all fields','error');
     post(`${API}/appointments`,{patientId:aPatient,doctorId:aDoctor,date:aDate,status:aStatus},()=>{setAPatient('');setADoctor('');setADate('');setAStatus('Scheduled');},'Appointment booked');
   };
+  
+  const updateApptStatus = async (id, newStatus) => {
+    try {
+      const res = await fetch(`${API}/appointments/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (!res.ok) throw new Error();
+      toast('Status updated');
+      load();
+    } catch {
+      toast('Failed to update status', 'error');
+    }
+  };
   const addBill = ()=>{
     if(!bPatient||!bAmount) return toast('Fill all fields','error');
     post(`${API}/billing`,{patientId:bPatient,amount:Number(bAmount),description:bDesc},()=>{setBPatient('');setBAmount('');setBDesc('');},'Bill created');
@@ -417,7 +432,17 @@ export default function App() {
                           <td><div className="td-name"><Avatar name={a.patientId?.name}/><div className="td-text"><strong>{a.patientId?.name||'—'}</strong></div></div></td>
                           <td>Dr. {a.doctorId?.name||'—'}</td>
                           <td>{fmtDate(a.date)}{isToday(a.date)&&<Pill label="Today" color="blue"/>}</td>
-                          <td>{statusPill(a.status)}</td>
+                          <td>
+                            <select 
+                              className={`status-select status-${(a.status || 'Scheduled').toLowerCase()}`}
+                              value={a.status || 'Scheduled'} 
+                              onChange={(e) => updateApptStatus(a._id, e.target.value)}
+                            >
+                              <option value="Scheduled">Scheduled</option>
+                              <option value="Completed">Completed</option>
+                              <option value="Cancelled">Cancelled</option>
+                            </select>
+                          </td>
                           <td><button className="btn btn-danger-ghost btn-sm" onClick={()=>del('appointments',a._id)}>Delete</button></td>
                         </tr>
                       ))}
